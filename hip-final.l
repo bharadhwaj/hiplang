@@ -39,7 +39,7 @@ YOUGOT {return (YOUGOT);}
 BRINGITON {return (BRINGITON);}
 {digit}+ { yylval=atoi(yytext); return (INTEGER); }
 
-{letter}({letter}|{digit}|_)* {return (IDENTIFIER); }
+{letter}({letter}|{digit}|_)* {yylval= convert_ident(yytext, yyleng);return (IDENTIFIER); }
 
 
 
@@ -49,7 +49,7 @@ EQUALS {return EQUALS;}
 ">"  {return RLOP_GT;}
 ">="  {return RLOP_GTE;}
 NOTEQUAL {return NOTEQUAL;}
-= {return ASSIGNMENT_OP;;}
+= {return ASSIGNMENT_OP;}
 
 "<-" {return BLOCK_START;}
 "->" {return BLOCK_END;}
