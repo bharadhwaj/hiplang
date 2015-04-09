@@ -3,30 +3,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symtab.h"
+#define YYDEBUG 1
 void yyerror(char *);
 int relop(int op, int arg1, int arg2);
 int yylex(void);
-int sym[32];
-
-install ( char *sym_name )
-{
-	symrec *s;
-	s = getsym (sym_name);
-	if (s == 0)
-		s = putsym (sym_name);
-	else { errors++;
-		printf( "\t\t\t%s is already defined\n", sym_name );
-	}
-}
-
-context_check( char *sym name )
-{ 
-	if ( getsym( sym name ) == 0 )
-	printf( ”%s is an undeclared identifier\n”, sym name );
-}
-
-
 %}
+%union {
+int     val;  /* For returning numbers.                   */
+struct symrec  *tptr;   /* For returning symbol-table pointers      */
+}
+
 %token SHOWME GIMME IS OF IF ARE NUMBER CHARACTER REALNUM THEN NOPE GOTTADO WHEN FOR FROM TO KEEPDOING CALLME WITH TODO THROW TOGET HEY TAKE YOUGOT BRINGITON
 
 %token <tptr> IDENTIFIER 
@@ -42,20 +28,12 @@ context_check( char *sym name )
 %nonassoc IFX
 %nonassoc NOPE
 
-%union {
-int     val;  /* For returning numbers.                   */
-symrec  *tptr;   /* For returning symbol-table pointers      */
-}
+
 
 %left EQUALS NOTEQUAL
 %left RLOP_LT RLOP_LTE RLOP_GT RLOP_GTE
 %left '+' '-'
 %left '*' '/'
-
-
-
-
-
 
 %%
 
@@ -73,12 +51,25 @@ statement
 	|expression_statement
 	|compound_statement
 	|assignment_expression
+	|io_statement
 	|IF condition_expression THEN statement %prec IFX { if($2) printf("\t\t\tCondition True."); else printf("Condition False.\n"); }
 	|IF condition_expression THEN statement NOPE statement { if($2) printf("\t\t\tCondition True."); else printf("Condition False.\n"); }
+	|iteration_statement
 	;
 
 declaration
-	:IDENTIFIER IS NUMBER { install($1)}
+	:IDENTIFIER IS NUMBER {$1->value = 0;}
+
+io_statement
+	:GIMME IDENTIFIER {scanf("%d",&$2->value);}
+	|SHOWME IDENTIFIER {printf("Identifier %s = %d\n", $2->name, $2->value);}
+
+iteration_statement
+	:GOTTADO WHEN expression statement {printf("\t\t\tIdentified loop\n");}
+	|GOTTADO statement WHEN expression {printf("\t\t\tIdentified loop\n");}
+	|FOR IDENTIFIER FROM INTEGER TO INTEGER KEEPDOING statement {printf("\t\t\t%s will loop from %d to %d\n", $2->name, $4, $6);}
+
+	;
 
 expression_statement
 	: '!'
@@ -87,9 +78,9 @@ expression_statement
 
 
 expression
-	:IDENTIFIER {$$ = $1->value}
-	|INTEGER {$$ = $1}
-	|BLOCK_START expression BLOCK_END {$$ = $2}
+	:IDENTIFIER {$$ = $1->value;}
+	|INTEGER {$$ = $1;}
+	|BLOCK_START expression BLOCK_END {$$ = $2;}
 	|condition_expression
 	|expression '+' expression { $$ = $1 + $3; printf("\t\t\t<--(%d,%d)Evaluated to: %d \n",$1,$3,$$); }
 	|expression '-' expression { $$ = $1 - $3; printf("\t\t\t<--(%d,%d)Evaluated to: %d \n",$1,$3,$$); }
@@ -114,13 +105,13 @@ compound_statement
 
 
 assignment_expression
-	: IDENTIFIER ASSIGNMENT_OP expression { $$ = $3; $1->value = $3}
+	: IDENTIFIER ASSIGNMENT_OP expression { $$ = $3; $1->value = $3;}
 
 
 %%
 
 void yyerror(char *s) {
-	printf("\n ERROR. Exiting.\n");
+	printf("\n ERROR:%s. Exiting.\n",s);
 	return;
 }
 
@@ -149,6 +140,7 @@ void main(int argc, char *argv[]) {
 	//fclose(yyin);
 
 }
+symrec *sym_table = (symrec *)0;
 
 symrec * putsym(char *sym_name)
 {
@@ -156,7 +148,7 @@ symrec * putsym(char *sym_name)
   ptr = (symrec *) malloc (sizeof (symrec));
   ptr->name = (char *) malloc (strlen (sym_name) + 1);
   strcpy (ptr->name,sym_name);
-  ptr->intvalue = 0; /* set value to 0 even if fctn.  */
+  ptr->value = 0; /* set value to 0 even if fctn.  */
   ptr->next = (struct symrec *)sym_table;
   sym_table = ptr;
   return ptr;

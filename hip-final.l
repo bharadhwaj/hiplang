@@ -44,7 +44,7 @@ BRINGITON {return (BRINGITON);}
 								symrec *s;
 								s = getsym(yytext);
 								if(s == 0)
-									s = putsym(yytext)
+									s = putsym(yytext);
 								yylval.tptr = s;
 								return (IDENTIFIER); 
 							  }

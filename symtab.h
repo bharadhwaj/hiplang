@@ -10,7 +10,7 @@ struct symrec
 typedef struct symrec symrec;
 
 /* The symbol table: a chain of `struct symrec'.     */
-symrec *sym_table = (symrec *)0;
+extern symrec *sym_table;
 
 symrec *putsym ();
 symrec *getsym ();
