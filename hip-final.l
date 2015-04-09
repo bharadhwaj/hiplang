@@ -6,6 +6,7 @@ letter [a-z]
 	void yyerror(char *);
 	void yyprint(char *);
 	#include "y.tab.h"
+	#include "symtab.h"
 %}
 
 %%
@@ -37,9 +38,16 @@ HEY {return (HEY);}
 TAKE {return (TAKE);}
 YOUGOT {return (YOUGOT);}
 BRINGITON {return (BRINGITON);}
-{digit}+ { yylval=atoi(yytext); return (INTEGER); }
+{digit}+ { yylval.val = atoi(yytext); return (INTEGER); }
 
-{letter}({letter}|{digit}|_)* {yylval= convert_ident(yytext, yyleng);return (IDENTIFIER); }
+{letter}({letter}|{digit}|_)* {
+								symrec *s;
+								s = getsym(yytext);
+								if(s == 0)
+									s = putsym(yytext)
+								yylval.tptr = s;
+								return (IDENTIFIER); 
+							  }
 
 
 
