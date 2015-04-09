@@ -52,8 +52,8 @@ statement
 	|compound_statement
 	|assignment_expression
 	|io_statement
-	|IF condition_expression THEN statement %prec IFX { if($2) printf("\t\t\tCondition True."); else printf("Condition False.\n"); }
-	|IF condition_expression THEN statement NOPE statement { if($2) printf("\t\t\tCondition True."); else printf("Condition False.\n"); }
+	|IF expression THEN statement %prec IFX { if($2) printf("\t\t\tCondition True.\n"); else printf("\t\t\tCondition False.\n"); }
+	|IF expression THEN statement NOPE statement { if($2) printf("\t\t\tCondition True.\n"); else printf("\t\t\tCondition False.\n"); }
 	|iteration_statement
 	;
 
