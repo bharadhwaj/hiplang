@@ -28,7 +28,13 @@ HI
 	
 	IF num THEN SHOWME num!
 	abc = 100!
-	IF num NOTEQUAL 1 THEN SHOWME abc
+	IF num NOTEQUAL 1 THEN SHOWME abc!
+
+	IF 1 > 2 THEN
+	abc = 111!
+	NOPE?
+	abc = 222!
+	SHOWME abc!
 
 ->
 BYE

@@ -49,7 +49,7 @@ BRINGITON {return (BRINGITON);}
 								return (IDENTIFIER); 
 							  }
 
-
+\".*\" {strcpy(yylval.str,yytext); return STRING;}
 
 EQUALS {return EQUALS;}
 "<=" {return RLOP_LTE;}

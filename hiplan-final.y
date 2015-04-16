@@ -10,6 +10,7 @@ int yylex(void);
 %}
 %union {
 int     val;  /* For returning numbers.                   */
+char str[256];
 struct symrec  *tptr;   /* For returning symbol-table pointers      */
 }
 
@@ -17,6 +18,7 @@ struct symrec  *tptr;   /* For returning symbol-table pointers      */
 
 %token <tptr> IDENTIFIER 
 %token <val>INTEGER
+%token <str> STRING
 %token EQUALS RLOP_LTE RLOP_LT RLOP_GT RLOP_GTE NOTEQUAL ASSIGNMENT_OP
 %token BLOCK_START BLOCK_END
 %token MAIN_START MAIN_END
@@ -63,6 +65,8 @@ declaration
 io_statement
 	:GIMME IDENTIFIER {scanf("%d",&$2->value);}
 	|SHOWME IDENTIFIER {printf("Identifier %s = %d\n", $2->name, $2->value);}
+	|SHOWME STRING {printf("stdout: %s\n", $2);}
+	;
 
 iteration_statement
 	:GOTTADO WHEN expression statement {printf("\t\t\tIdentified loop\n");}
