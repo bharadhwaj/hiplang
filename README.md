@@ -4,6 +4,8 @@
  
 ## USER MANUAL
 
+To know more about the syntax of the proposed language, have a look at the file  
+**documentation.pdf**  
 In order to run the file.  
 
 1. Navigate to the folder.  
@@ -20,7 +22,7 @@ In order to run the file.
 	gcc lex.yy.c y.tab.c -ll  
 	```
 5. Finally, in order to try sample run with you own inputs, try giving,  
-```
+	```
 	./a.out
 	```  
    and try with your inputs.  
